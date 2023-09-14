@@ -1,4 +1,4 @@
-name: Build and publish mixnode
+name: Build and publish mixnode, gateway, network-requester
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         default: develop
 
 jobs:
-  build:
+  build-publish:
     runs-on: [ self-hosted, custom-linux ]
     # Enable sccache via environment variable
     env:
@@ -36,12 +36,27 @@ jobs:
       - name: Build all binaries
         uses: actions-rs/cargo@v1
         with:
-          command: build --release
-          args: --workspace
+          command: build
+          args: --release --workspace
      
-      - name: Upload Artifact
+      - name: nym-mixnode
         uses: actions/upload-artifact@v3
         with:
           name: nym-mixnode
           path: target/release/nym-mixnode
           retention-days: 1
+
+      - name: nym-gateway
+        uses: actions/upload-artifact@v3
+        with:
+          name: nym-gateway
+          path: target/release/nym-gateway
+          retention-days: 1
+          
+      - name: nym-network-requester
+        uses: actions/upload-artifact@v3
+        with:
+          name: nym-network-requester
+          path: target/release/nym-network-requester
+          retention-days: 1
+          
