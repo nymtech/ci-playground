@@ -1,0 +1,47 @@
+name: Build and publish mixnode
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: false
+        description: Branch or tag to checkout from `nymtech/nym` repository
+        default: develop
+
+jobs:
+  build:
+    runs-on: [ self-hosted, custom-linux ]
+    # Enable sccache via environment variable
+    env:
+      RUSTC_WRAPPER: /home/ubuntu/.cargo/bin/sccache
+    steps:
+      - name: Install Dependencies (Linux)
+        run: sudo apt-get update && sudo apt-get -y install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libudev-dev squashfs-tools protobuf-compiler
+        continue-on-error: true
+
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          repository: nymtech/nym
+          ref: ${{ inputs.ref }} 
+
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+
+      - name: Build all binaries
+        uses: actions-rs/cargo@v1
+        with:
+          command: build --release
+          args: --workspace
+     
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: nym-mixnode
+          path: target/release/nym-mixnode
+          retention-days: 1
