@@ -36,8 +36,8 @@ jobs:
       - name: Build all binaries
         uses: actions-rs/cargo@v1
         with:
-          command: build --release
-          args: --workspace
+          command: build
+          args: --release --workspace
      
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
