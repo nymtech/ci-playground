@@ -25,8 +25,7 @@ jobs:
     # Clean up anything from previous build
       - name: 'Cleanup build folder'
         run: |
-          ls -la ./
-          rm -rf ./*
+          rm -r .\*
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
