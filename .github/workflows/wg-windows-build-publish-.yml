@@ -22,12 +22,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Clean up anything from previous build
-      - name: 'Cleanup build folder'
-        run: |
-          rm -Recurse ${{github.workspace}}\*
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: TooMuch4U/runner-post-cleanup@v2.1
 
       # This part here is cloning a second repository
     # While cloning the repository:
