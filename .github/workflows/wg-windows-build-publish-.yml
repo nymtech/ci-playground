@@ -22,21 +22,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Run a multi-line script
-        run: |
-          rm -r .\x86\
-          rm -rf .\amd64\
-          rm -rf .\arm64\
-          rm -rf .\installer\dist\
-          rm -rf .\installer\arm64\
-          rm -rf .\installer\amd64\
-          rm -rf .\installer\x86\
       # This part here is cloning a second repository
     # While cloning the repository:
     #   - it clones the repo into the given `path`
     #   - it checks out the branch defined at `ref`
       - name: Clone supercharge docs repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: nymtech/wireguard-windows
           ref: master
