@@ -22,6 +22,13 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    # Clean up anything from previous build
+      - name: 'Cleanup build folder'
+        run: |
+          ls -la ./
+          rm -rf ./* || true
+          rm -rf ./.??* || true
+          ls -la ./
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
@@ -34,7 +41,6 @@ jobs:
         with:
           repository: nymtech/wireguard-windows
           ref: master
-
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
