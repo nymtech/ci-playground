@@ -22,7 +22,15 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: AutoModality/action-clean@v1
+      - name: Run a multi-line script
+        run: |
+          rm -r .\x86\
+          rm -rf .\amd64\
+          rm -rf .\arm64\
+          rm -rf .\installer\dist\
+          rm -rf .\installer\arm64\
+          rm -rf .\installer\amd64\
+          rm -rf .\installer\x86\
       # This part here is cloning a second repository
     # While cloning the repository:
     #   - it clones the repo into the given `path`
