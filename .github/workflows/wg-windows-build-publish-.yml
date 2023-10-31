@@ -41,7 +41,7 @@ jobs:
           .\build.bat
           .\installer\build.bat
         env:
-          SigningCertificate : ${{ secrets.WINDOWS_CERTIFICATE }}
+          SigningCertificate: ${{ secrets.WINDOWS_CERTIFICATE }}
           
       - name: wireguard-amd64
         uses: actions/upload-artifact@v3
