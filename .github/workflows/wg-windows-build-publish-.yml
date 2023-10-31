@@ -22,6 +22,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: AutoModality/action-clean@v1
       # This part here is cloning a second repository
     # While cloning the repository:
     #   - it clones the repo into the given `path`
@@ -59,6 +60,3 @@ jobs:
           name: wireguard-x86-0.5.3.msi
           path: installer\dist\wireguard-x86-0.5.3.msi
           retention-days: 1
-
-      - uses: colpal/actions-clean@v1
-        if: ${{ always() }}
