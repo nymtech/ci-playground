@@ -22,8 +22,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: TooMuch4U/runner-post-cleanup@v2.1
-
       # This part here is cloning a second repository
     # While cloning the repository:
     #   - it clones the repo into the given `path`
