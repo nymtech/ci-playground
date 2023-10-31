@@ -61,3 +61,6 @@ jobs:
           name: wireguard-x86-0.5.3.msi
           path: installer\dist\wireguard-x86-0.5.3.msi
           retention-days: 1
+
+      - uses: colpal/actions-clean@v1
+        if: ${{ always() }}
