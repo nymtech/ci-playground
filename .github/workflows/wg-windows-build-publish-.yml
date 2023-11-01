@@ -24,18 +24,23 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Add sign cert to file
-      - name: Create signing.pfx from B64_SECRET1
-        id: secret-file1
-        run: |
-          $FileName = "${{ github.workspace }}/signing.pfx"
-          if (Test-Path $FileName) {
-            Remove-Item $FileName
-          }
-          $data = [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($env:SECRET_DATA1))
-          New-Item -Path ${{ github.workspace }} -name "signing.pfx" -Value $data        
-        shell: pwsh
-        env:
-          SECRET_DATA1: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
+      # - name: Create signing.pfx from B64_SECRET1
+      #   id: secret-file1
+      #   run: |
+      #     $FileName = "${{ github.workspace }}/signing.pfx"
+      #     if (Test-Path $FileName) {
+      #       Remove-Item $FileName
+      #     }
+      #     $data = [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($env:SECRET_DATA1))
+      #     New-Item -Path ${{ github.workspace }} -name "signing.pfx" -Value $data        
+      #   shell: pwsh
+      #   env:
+      #     SECRET_DATA1: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
+      - name: Create env file
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: 'signing.pfx'
+          encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       # This part here is cloning a second repository
     # While cloning the repository:
     #   - it clones the repo into the given `path`
