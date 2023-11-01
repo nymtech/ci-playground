@@ -32,6 +32,8 @@ jobs:
         with:
           repository: nymtech/wireguard-windows
           ref: master
+          # have to set this to false because it fails to complete clean on windows self-hosted runner
+          # not sure how this will impact new build version changes
           clean: false
           
       # Runs a set of commands using the runners shell
@@ -40,9 +42,12 @@ jobs:
           .\build.bat
           .\installer\build.bat
         env:
+          # this signing doesn't work. I think this needs to be a .cer and not a .pfx
           SigningCertificate: ${{ secrets.WINDOWS_CERTIFICATE }}
+          # not sure if this timestamp server will work, pulled from tauri docs
           TimestampServer: http://timestamp.comodoca.com
-          
+        
+        # will need to update these in the future to be dynamic for release version
       - name: wireguard-amd64
         uses: actions/upload-artifact@v3
         with:
