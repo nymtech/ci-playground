@@ -23,18 +23,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # This part here is cloning a second repository
-    # While cloning the repository:
-    #   - it clones the repo into the given `path`
-    #   - it checks out the branch defined at `ref`
-      - name: Clone wireguard-windows repo
-        uses: actions/checkout@v4
-        with:
-          repository: nymtech/wireguard-windows
-          ref: master
-          # have to set this to false because it fails to complete clean on windows self-hosted runner
-          # not sure how this will impact new build version changes
-          clean: false
       # Add sign cert to file
       - name: Create signing.pfx from B64_SECRET1
         id: secret-file1
@@ -48,6 +36,18 @@ jobs:
         shell: pwsh
         env:
           SECRET_DATA1: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
+      # This part here is cloning a second repository
+    # While cloning the repository:
+    #   - it clones the repo into the given `path`
+    #   - it checks out the branch defined at `ref`
+      - name: Clone wireguard-windows repo
+        uses: actions/checkout@v4
+        with:
+          repository: nymtech/wireguard-windows
+          ref: master
+          # have to set this to false because it fails to complete clean on windows self-hosted runner
+          # not sure how this will impact new build version changes
+          clean: false
       # Runs a set of commands using the runners shell
       - name: Run build and signing
         env:
