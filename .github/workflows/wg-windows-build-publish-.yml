@@ -52,8 +52,8 @@ jobs:
           # not sure if this timestamp server will work, pulled from tauri docs
           TimestampServer: http://timestamp.comodoca.com
         run: |
-          .\build.bat "%TimestampServer%" "%SigningCertificate%" "%SigningCertificatePassword%"
-          .\installer\build.bat "%TimestampServer%" "%SigningCertificate%" "%SigningCertificatePassword%"
+          .\build.bat %TimestampServer% %SigningCertificate% %SigningCertificatePassword%
+          .\installer\build.bat %TimestampServer% %SigningCertificate% %SigningCertificatePassword%
         
         # will need to update these in the future to be dynamic for release version
       - name: wireguard-amd64
