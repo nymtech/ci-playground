@@ -41,6 +41,7 @@ jobs:
           .\installer\build.bat
         env:
           SigningCertificate: ${{ secrets.WINDOWS_CERTIFICATE }}
+          TimestampServer: http://timestamp.comodoca.com
           
       - name: wireguard-amd64
         uses: actions/upload-artifact@v3
