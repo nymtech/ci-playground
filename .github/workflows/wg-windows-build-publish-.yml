@@ -41,7 +41,7 @@ jobs:
         with:
           base64-encoded-secret: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
           filename: "signing.pfx"
-          working-directory: ${{ GITHUB_WORKSPACE }}
+          working-directory: ${{ github.workspace }}
       # Runs a set of commands using the runners shell
       - name: Run build and signing
         env:
