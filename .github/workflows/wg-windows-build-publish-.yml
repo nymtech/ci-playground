@@ -36,12 +36,19 @@ jobs:
           # not sure how this will impact new build version changes
           clean: false
       # Add sign cert to file
-      - name: Extract signing certificate
-        uses: mobiledevops/secret-to-file-action@v1
-        with:
-          base64-encoded-secret: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
-          filename: "signing.pfx"
-          working-directory: "./"
+      - name: Create signing.pfc from B64_SECRET1
+        id: secret-file1
+        run: |
+          $secretFile = Join-Path -Path $env:RUNNER_TEMP -ChildPath "signing.pfx"; 
+          $encodedBytes = [System.Convert]::FromBase64String($env:SECRET_DATA1); 
+          Set-Content $secretFile -Value $encodedBytes -AsByteStream;
+          $secretFileHash = Get-FileHash $secretFile;
+          Write-Output "::set-output name=SECRET_FILE::$secretFile";
+          Write-Output "::set-output name=SECRET_FILE_HASH::$($secretFileHash.Hash)";
+          Write-Output "Secret file $secretFile has hash $($secretFileHash.Hash)";          
+        shell: pwsh
+        env:
+          SECRET_DATA1: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       # Runs a set of commands using the runners shell
       - name: Run build and signing
         env:
