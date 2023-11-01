@@ -44,6 +44,7 @@ jobs:
         env:
           # this signing doesn't work. I think this needs to be a .cer and not a .pfx
           SigningCertificate: ${{ secrets.WINDOWS_CERTIFICATE }}
+          SigningCertificatePassword: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
           # not sure if this timestamp server will work, pulled from tauri docs
           TimestampServer: http://timestamp.comodoca.com
         
