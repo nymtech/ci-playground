@@ -18,24 +18,10 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on 
-    # remove windows11 tag for real runner
-    runs-on: [self-hosted, Windows, windows11, noroot]
+    runs-on: [windows-latest-8-core]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Add sign cert to file
-      # - name: Create signing.pfx from B64_SECRET1
-      #   id: secret-file1
-      #   run: |
-      #     $FileName = "${{ github.workspace }}/signing.pfx"
-      #     if (Test-Path $FileName) {
-      #       Remove-Item $FileName
-      #     }
-      #     $data = [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($env:SECRET_DATA1))
-      #     New-Item -Path ${{ github.workspace }} -name "signing.pfx" -Value $data        
-      #   shell: pwsh
-      #   env:
-      #     SECRET_DATA1: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: Create env file
         uses: timheuer/base64-to-file@v1.2
         with:
@@ -58,7 +44,7 @@ jobs:
         env:
           SigningCertificate: "signing.pfx"
           SigningCertificatePassword: ${{ secrets.WINDOWS_SIGNING_PFX_PASSWORD }}
-          # not sure if this timestamp server will work, pulled from tauri docs
+          # pulled from tauri docs
           TimestampServer: http://timestamp.comodoca.com
         run: |
           .\build.bat %TimestampServer% %SigningCertificate% %SigningCertificatePassword%
