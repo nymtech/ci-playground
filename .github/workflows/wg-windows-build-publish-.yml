@@ -27,7 +27,7 @@ jobs:
     # While cloning the repository:
     #   - it clones the repo into the given `path`
     #   - it checks out the branch defined at `ref`
-      - name: Clone supercharge docs repository
+      - name: Clone wireguard-windows repo
         uses: actions/checkout@v4
         with:
           repository: nymtech/wireguard-windows
