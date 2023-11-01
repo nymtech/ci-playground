@@ -60,3 +60,10 @@ jobs:
           name: wireguard-x86-0.5.3.msi
           path: installer\dist\wireguard-x86-0.5.3.msi
           retention-days: 1
+      - name: cleanup runner workspace
+        run: |
+          echo $GITHUB_WORKSPACE
+          rm -r $GITHUB_WORKSPACE
+          mkdir $GITHUB_WORKSPACE
+        shell: bash
+        if: ${{ failure() && steps.checkout.conclusion == 'failure' }}
