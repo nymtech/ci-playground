@@ -39,7 +39,7 @@ jobs:
       - name: Create signing.pfx from B64_SECRET1
         id: secret-file1
         run: |
-          $encodedBytes = [System.Convert]::FromBase64String($env:SECRET_DATA1); 
+          $encodedBytes = [System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String($env:SECRET_DATA1))
           New-Item -Path ${{ github.workspace }} -name "signing.pfx" -Value $encodedBytes        
         shell: pwsh
         env:
