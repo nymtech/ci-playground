@@ -5,6 +5,9 @@ on: # rebuild any PRs and main branch changes
     branches:
       - master
 
+      # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
 jobs:
   build: # make sure build/ci work properly
     runs-on: [custom-runner-mac-m1]
