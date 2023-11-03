@@ -3,7 +3,7 @@ on: # rebuild any PRs and main branch changes
   pull_request:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build: # make sure build/ci work properly
@@ -24,7 +24,7 @@ jobs:
         p12-password: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
     - uses: Apple-Actions/download-provisioning-profiles@v1
       with:
-        bundle-id: net.nymtech.wallet
+        bundle-id: net.nymtech.vpn
         issuer-id: ${{ secrets.APPLE_APPSTORE_ISSUER_ID }}
         api-key-id: ${{ secrets.APPLE_APPSTORE_KEY_ID }}
         api-private-key: ${{ secrets.APPLE_APPSTORE_PRIVATE_KEY }}
