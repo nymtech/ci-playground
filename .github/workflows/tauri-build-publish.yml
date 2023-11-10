@@ -18,10 +18,11 @@ jobs:
         with:
           repository: nymtech/nym
           path: nym/nym-vpn/ui
+          ref: feature/tauri-windows-service
       - name: setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 16
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
         with:
