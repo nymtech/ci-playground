@@ -22,7 +22,7 @@ jobs:
       - name: setup node
         uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 21
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
         with:
@@ -44,7 +44,7 @@ jobs:
           Remove-Item -path certificate -include tempCert.txt
           Import-PfxCertificate -FilePath certificate/certificate.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String $env:WINDOWS_CERTIFICATE_PASSWORD -Force -AsPlainText)
       - name: install app dependencies and build it
-        run: cd nym/nym-vpn/ui && npm i && yarn build
+        run: cd nym/nym-vpn/ui && yarn && yarn build
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
