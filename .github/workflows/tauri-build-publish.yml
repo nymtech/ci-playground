@@ -10,6 +10,8 @@ jobs:
       fail-fast: false
       matrix:
         platform: [windows-latest]
+    env:
+      working-directory: ./nym/nym-vpn/ui
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -44,7 +46,8 @@ jobs:
           Remove-Item -path certificate -include tempCert.txt
           Import-PfxCertificate -FilePath certificate/certificate.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String $env:WINDOWS_CERTIFICATE_PASSWORD -Force -AsPlainText)
       - name: install app dependencies and build it
-        run: cd nym/nym-vpn/ui && yarn install --network-timeout 1000000
+        run: yarn install --network-timeout 1000000 && yarn build
+        working-directory: ${{env.working-directory}}
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,4 +57,4 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
-          projectPath: nyp-vpn/ui
+          projectPath: ${{ env.working-directory }}
