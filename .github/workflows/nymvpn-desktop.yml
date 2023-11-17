@@ -27,7 +27,7 @@ jobs:
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: 1.73
       - name: install cargo dependencies 
         run: |
             cargo install cargo-deb
