@@ -27,7 +27,7 @@ jobs:
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
       - name: install cargo dependencies 
         run: |
             cargo install cargo-deb
@@ -61,8 +61,9 @@ jobs:
           args: install protoc
       - name: build ubuntu deb package
         if: matrix.platform == 'ubuntu-latest'
-        run: |
-            cargo make deb
+        uses: actions-rs/cargo@v1
+        with:
+          command: make deb
       - name: inport apple certs
         if: matrix.platform == 'macos-latest'
         uses: apple-actions/import-codesign-certs@v2
@@ -78,8 +79,9 @@ jobs:
           api-private-key: ${{ secrets.APPLE_APPSTORE_PRIVATE_KEY }}
       - name: build macos pkg 
         if: matrix.platform == 'macos-latest'
-        run: |
-            cargo make pkg
+        uses: actions-rs/cargo@v1
+        with:
+          command: make pkg
         env:
           APPLE_TEAM_ID: VW5DZLFHM5
           APPLICATION_SIGNING_IDENTITY: Nym Technologies SA
@@ -92,8 +94,9 @@ jobs:
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: build windows installer 
         if: matrix.platform == 'windows-latest'
-        run: |
-            cargo make msi
+        uses: actions-rs/cargo@v1
+        with:
+          command: make msi
         env:
           SIGN: true
           CERT_FILE: "signing.pfx"
