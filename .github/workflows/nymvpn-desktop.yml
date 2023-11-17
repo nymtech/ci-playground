@@ -62,6 +62,10 @@ jobs:
         uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install protoc
+      - name: setup go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
       - name: build ubuntu deb package
         if: matrix.platform == 'ubuntu-latest'
         run: cargo make deb
