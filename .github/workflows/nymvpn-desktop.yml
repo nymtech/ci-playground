@@ -38,7 +38,7 @@ jobs:
             cargo install cargo-about
         working-directory: ${{env.working-directory}}
       - name: install ubuntu dependencies
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.platform == 'ubuntu-latest' && always()
         run: |
             sudo apt install -y build-essential \
             pkg-config \
@@ -52,11 +52,11 @@ jobs:
             protobuf-compiler \
             zip \
       - name: install protobuf macos
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'macos-latest' && always()
         run: |
             brew install protobuf
       - name: install protobuf windows
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows-latest' && always()
         uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install protoc
