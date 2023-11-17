@@ -27,7 +27,7 @@ jobs:
       - name: install Rust stable
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
       - name: install cargo dependencies 
         run: |
             cargo install cargo-deb
@@ -39,7 +39,7 @@ jobs:
       - name: install ubuntu dependencies
         if: matrix.platform == 'ubuntu-latest'
         run: |
-            apt-update install build-essential \
+            sudo apt install -y build-essential \
             pkg-config \
             libgtk-3-dev \
             libssl-dev \
@@ -90,7 +90,7 @@ jobs:
         with:
           fileName: 'signing.pfx'
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
-      - name: build macos pkg 
+      - name: build windows installer 
         if: matrix.platform == 'windows-latest'
         run: |
             cargo make msi
