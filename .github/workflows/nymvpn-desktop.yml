@@ -1,0 +1,102 @@
+name: 'publish'
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-tauri:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, macos-latest, ubuntu-latest]
+    env:
+      working-directory: ./nym/nym-vpn/desktop
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: nymtech/nym
+          path: nym/nym-vpn/desktop
+          ref: feature/nymvpn-desktop
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 21
+      - name: install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: install cargo dependencies 
+        run: |
+            cargo install cargo-deb
+            cargo install cargo-generate-rpm
+            cargo install --force cargo-make
+            cargo install sd
+            cargo install ripgrep
+            cargo install cargo-about
+      - name: install ubuntu dependencies
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+            apt install build-essential \
+            pkg-config \
+            libgtk-3-dev \
+            libssl-dev \
+            libsoup2.4-dev \
+            libjavascriptcoregtk-4.0-dev \
+            libwebkit2gtk-4.0-dev \
+            libmnl-dev \
+            libnftnl-dev \
+            protobuf-compiler \
+            zip \
+      - name: install protobuf macos
+        if: matrix.platform == 'macos-latest'
+        run: |
+            brew install protobuf
+      - name: install protobuf windows
+        if: matrix.platform == 'windows-latest'
+        uses: crazy-max/ghaction-chocolatey@v3
+        with:
+          args: install protoc
+      - name: build ubuntu deb package
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+            cargo make deb
+      - name: inport apple certs
+        if: matrix.platform == 'macos-latest'
+        uses: apple-actions/import-codesign-certs@v2
+        with: 
+          p12-file-base64: ${{ secrets.APPLE_SIGNING_CERT_BASE64 }}
+          p12-password: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
+      - uses: Apple-Actions/download-provisioning-profiles@v1
+        with:
+          bundle-id: net.nymtech.vpn
+          issuer-id: ${{ secrets.APPLE_APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPLE_APPSTORE_KEY_ID }}
+          api-private-key: ${{ secrets.APPLE_APPSTORE_PRIVATE_KEY }}
+      - name: build macos pkg 
+        if: matrix.platform == 'macos-latest'
+        run: |
+            cargo make pkg
+        env:
+          APPLE_TEAM_ID: VW5DZLFHM5
+          APPLICATION_SIGNING_IDENTITY: Nym Technologies SA
+          INSTALLER_SIGNING_IDENTITY: Nym Technologies SA
+      - name: Create env file
+        uses: timheuer/base64-to-file@v1.2
+        if: matrix.platform == 'windows-latest'
+        with:
+          fileName: 'signing.pfx'
+          encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
+      - name: build macos pkg 
+        if: matrix.platform == 'windows-latest'
+        run: |
+            cargo make msi
+        env:
+          SIGN: true
+          CERT_FILE: "signing.pfx"
+          CERT_FILE_PASSWORD: ${{ secrets.WINDOWS_SIGNING_PFX_PASSWORD }}
+            
+        
+            
