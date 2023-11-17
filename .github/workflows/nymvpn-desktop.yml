@@ -39,7 +39,7 @@ jobs:
       - name: install ubuntu dependencies
         if: matrix.platform == 'ubuntu-latest'
         run: |
-            apt install build-essential \
+            apt-update install build-essential \
             pkg-config \
             libgtk-3-dev \
             libssl-dev \
@@ -70,6 +70,7 @@ jobs:
           p12-file-base64: ${{ secrets.APPLE_SIGNING_CERT_BASE64 }}
           p12-password: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
       - uses: Apple-Actions/download-provisioning-profiles@v1
+        if: matrix.platform == 'macos-latest'
         with:
           bundle-id: net.nymtech.vpn
           issuer-id: ${{ secrets.APPLE_APPSTORE_ISSUER_ID }}
