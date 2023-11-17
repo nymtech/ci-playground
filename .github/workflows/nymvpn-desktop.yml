@@ -13,6 +13,9 @@ jobs:
     env:
       working-directory: ./nym/nym-vpn/desktop
     runs-on: ${{ matrix.platform }}
+    defaults:
+      run:
+        working-directory: ./nym/nym-vpn/desktop
     steps:
       - name: Checkout tools repo
         uses: actions/checkout@v4
@@ -61,9 +64,7 @@ jobs:
           args: install protoc
       - name: build ubuntu deb package
         if: matrix.platform == 'ubuntu-latest'
-        uses: actions-rs/cargo@v1
-        with:
-          command: make deb
+        run: cargo make deb
       - name: inport apple certs
         if: matrix.platform == 'macos-latest'
         uses: apple-actions/import-codesign-certs@v2
@@ -79,9 +80,7 @@ jobs:
           api-private-key: ${{ secrets.APPLE_APPSTORE_PRIVATE_KEY }}
       - name: build macos pkg 
         if: matrix.platform == 'macos-latest'
-        uses: actions-rs/cargo@v1
-        with:
-          command: make pkg
+        run: cargo make pkg
         env:
           APPLE_TEAM_ID: VW5DZLFHM5
           APPLICATION_SIGNING_IDENTITY: Nym Technologies SA
@@ -94,9 +93,7 @@ jobs:
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: build windows installer 
         if: matrix.platform == 'windows-latest'
-        uses: actions-rs/cargo@v1
-        with:
-          command: make msi
+        run: cargo make msi
         env:
           SIGN: true
           CERT_FILE: "signing.pfx"
