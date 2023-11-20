@@ -169,6 +169,9 @@ export async function createHashesFromReleaseTagOrNameOrId({ releaseTagOrNameOrI
         )
     }
 
+    console.log("raw releases");
+    console.log(releases)
+
     // process all releases by default
     let releasesToProcess = releases;
 
