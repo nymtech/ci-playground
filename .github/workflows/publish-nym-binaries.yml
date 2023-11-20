@@ -68,15 +68,16 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --workspace
+          args: --release
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: my-artifact
           path: |
-            target/debug/nym-mixnode
-            target/debug/nym-api
+            target/release/nym-mixnode
+            target/release/nym-api
+            target/release/explorer-api
           retention-days: 30
 
       - id: create-release
@@ -85,8 +86,9 @@ jobs:
         if: github.event_name == 'release'
         with:
           files: |
-            target/debug/nym-mixnode
-            target/debug/nym-api
+            target/release/nym-mixnode
+            target/release/nym-api
+            target/release/explorer-api
 
   push-release-data-client:
     if: ${{ (startsWith(github.ref, 'refs/tags/nym-binaries-') && github.event_name == 'release') || github.event_name == 'workflow_dispatch' }}
