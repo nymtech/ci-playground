@@ -1,4 +1,4 @@
-name: 'publish'
+name: "publish"
 on:
   push:
     branches:
@@ -9,16 +9,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows10, custom-runner-mac-m1, custom-linux]
+        platform: [windows11, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     env:
       working-directory: ./nym-vpn/desktop
     steps:
+      - name: try to fix windows path length
+        if: matrix.platform == 'windows11'
+        run: git config --system core.longpaths true
       - name: Checkout tools repo
         uses: actions/checkout@v4
         with:
           repository: nymtech/nym
-          fetch-depth: 0
           ref: feature/nymvpn-desktop
       - name: setup node
         uses: actions/setup-node@v1
@@ -28,65 +30,68 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: 1.73
-      - name: install cargo dependencies 
+      - name: install ubuntu dependencies
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          sudo apt install -y build-essential \
+          pkg-config \
+          libgtk-3-dev \
+          libssl-dev \
+          libsoup2.4-dev \
+          libjavascriptcoregtk-4.0-dev \
+          libwebkit2gtk-4.0-dev \
+          libmnl-dev \
+          libnftnl-dev \
+          protobuf-compiler \
+          zip \
+      - name: install cargo dependencies
         continue-on-error: true
         run: |
-            cargo install cargo-deb
-            cargo install cargo-generate-rpm
-            cargo install --force cargo-make
-            cargo install sd
-            cargo install ripgrep
-            cargo install cargo-about
-      - name: install ubuntu dependencies
-        if: matrix.platform == 'custom-linux'
-        run: |
-            sudo apt install -y build-essential \
-            pkg-config \
-            libgtk-3-dev \
-            libssl-dev \
-            libsoup2.4-dev \
-            libjavascriptcoregtk-4.0-dev \
-            libwebkit2gtk-4.0-dev \
-            libmnl-dev \
-            libnftnl-dev \
-            protobuf-compiler \
-            zip \
+          cargo install cargo-deb
+          cargo install --force cargo-make
+          cargo install sd
+          cargo install ripgrep
+          cargo install cargo-about
+          cargo install cargo-generate-rpm
       - name: install protobuf macos
         continue-on-error: true
-        if: matrix.platform == 'custom-runner-mac-m1'
+        if: matrix.platform == 'macos-latest'
         run: |
-            brew install protobuf
+          brew install protobuf
       - name: install protobuf windows
-        if: matrix.platform == 'windows10'
+        if: matrix.platform == 'windows11'
         uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install protoc
+      - name: Add msbuild to PATH
+        if: matrix.platform == 'windows11'
+        uses: microsoft/setup-msbuild@v1.1
       - name: setup go
         continue-on-error: true
         uses: actions/setup-go@v4
         with:
-          go-version: 'stable'
+          go-version: "stable"
       - name: build ubuntu deb package
-        if: matrix.platform == 'custom-linux'
+        if: matrix.platform == 'ubuntu-latest'
         run: cargo make deb
         working-directory: ${{ env.working-directory }}
       - name: import apple certs
-        if: matrix.platform == 'custom-runner-mac-m1'
+        if: matrix.platform == 'macos-latest'
         uses: apple-actions/import-codesign-certs@v2
         continue-on-error: true
-        with: 
+        with:
           p12-file-base64: ${{ secrets.APPLE_SIGNING_CERT_BASE64 }}
           p12-password: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
       - uses: Apple-Actions/download-provisioning-profiles@v1
         continue-on-error: true
-        if: matrix.platform == 'custom-runner-mac-m1'
+        if: matrix.platform == 'macos-latest'
         with:
           bundle-id: net.nymtech.vpn
           issuer-id: ${{ secrets.APPLE_APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPLE_APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.APPLE_APPSTORE_PRIVATE_KEY }}
-      - name: build macos pkg 
-        if: matrix.platform == 'custom-runner-mac-m1'
+      - name: build macos pkg
+        if: matrix.platform == 'macos-latest'
         run: cargo make pkg
         working-directory: ${{ env.working-directory }}
         env:
@@ -95,18 +100,32 @@ jobs:
           INSTALLER_SIGNING_IDENTITY: Nym Technologies SA
       - name: Create env file
         uses: timheuer/base64-to-file@v1.2
-        if: matrix.platform == 'windows10'
+        if: matrix.platform == 'windows11'
         with:
-          fileName: 'signing.pfx'
+          fileName: "signing.pfx"
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
-      - name: build windows installer 
-        if: matrix.platform == 'windows10'
+      - name: install arc windows
+        if: matrix.platform == 'windows11'
+        uses: crazy-max/ghaction-chocolatey@v3
+        with:
+          args: install archiver
+      - name: add signtool to path
+        if: matrix.platform == 'windows11'
+        run: |
+          curl -L https://github.com/Delphier/SignTool/releases/download/v10.0.22621.755/SignTool-10.0.22621.755.zip --output signtool.zip
+          arc unarchive signtool.zip
+      - name: build windows installer
+        if: matrix.platform == 'windows11'
+        shell: bash
         run: cargo make msi
         working-directory: ${{ env.working-directory }}
         env:
           SIGN: true
           CERT_FILE: "signing.pfx"
           CERT_FILE_PASSWORD: ${{ secrets.WINDOWS_SIGNING_PFX_PASSWORD }}
-            
-        
-            
+      - uses: actions/upload-artifact@v3
+        if: matrix.platform == 'ubuntu-latest'
+        with:
+          name: nymvpn.deb
+          # need to make this not hardcoded to single version
+          path: ${{ github.workspace }}/nym-vpn/desktop/target/x86_64-unknown-linux-gnu/debian/nymvpn_0.0.2-1_amd64.deb
