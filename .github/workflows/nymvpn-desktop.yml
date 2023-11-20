@@ -5,7 +5,7 @@ on:
       - main
 defaults:
   run:
-    working-directory: ./nym-vpn/desktop
+    working-directory: nym/nym-vpn/desktop
 
 jobs:
   publish-tauri:
