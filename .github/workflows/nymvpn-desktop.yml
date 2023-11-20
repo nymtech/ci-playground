@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, macos-latest, ubuntu-latest]
+        platform: [windows-latest, custom-runner-mac-m1, ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     env:
       working-directory: ./nym-vpn/desktop
@@ -52,7 +52,7 @@ jobs:
             protobuf-compiler \
             zip \
       - name: install protobuf macos
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'custom-runner-mac-m1'
         run: |
             brew install protobuf
       - name: install protobuf windows
@@ -69,21 +69,21 @@ jobs:
         run: cargo make deb
         working-directory: ${{ env.working-directory }}
       - name: inport apple certs
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'custom-runner-mac-m1'
         uses: apple-actions/import-codesign-certs@v2
         with: 
           p12-file-base64: ${{ secrets.APPLE_SIGNING_CERT_BASE64 }}
           p12-password: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
       - uses: Apple-Actions/download-provisioning-profiles@v1
         continue-on-error: true
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'custom-runner-mac-m1'
         with:
           bundle-id: net.nymtech.vpn
           issuer-id: ${{ secrets.APPLE_APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPLE_APPSTORE_KEY_ID }}
           api-private-key: ${{ secrets.APPLE_APPSTORE_PRIVATE_KEY }}
       - name: build macos pkg 
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'custom-runner-mac-m1'
         run: cargo make pkg
         working-directory: ${{ env.working-directory }}
         env:
