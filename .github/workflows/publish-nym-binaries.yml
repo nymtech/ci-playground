@@ -75,15 +75,15 @@ jobs:
         with:
           name: my-artifact
           path: |
-            target/debug/explorer-api
-            target/debug/nym-client
-            target/debug/nym-gateway
+#            target/debug/explorer-api
+#            target/debug/nym-client
+#            target/debug/nym-gateway
             target/debug/nym-mixnode
-            target/debug/nym-socks5-client
+#            target/debug/nym-socks5-client
             target/debug/nym-api
-            target/debug/nym-network-requester
-            target/debug/nym-network-statistics
-            target/debug/nym-cli
+#            target/debug/nym-network-requester
+#            target/debug/nym-network-statistics
+#            target/debug/nym-cli
           retention-days: 30
 
       - id: create-release
@@ -92,15 +92,15 @@ jobs:
         if: github.event_name == 'release'
         with:
           files: |
-            target/debug/explorer-api
-            target/debug/nym-client
-            target/debug/nym-gateway
+#            target/debug/explorer-api
+#            target/debug/nym-client
+#            target/debug/nym-gateway
             target/debug/nym-mixnode
-            target/debug/nym-socks5-client
+#            target/debug/nym-socks5-client
             target/debug/nym-api
-            target/debug/nym-network-requester
-            target/debug/nym-network-statistics
-            target/debug/nym-cli
+#            target/debug/nym-network-requester
+#            target/debug/nym-network-statistics
+#            target/debug/nym-cli
 
   push-release-data-client:
     if: ${{ (startsWith(github.ref, 'refs/tags/nym-binaries-') && github.event_name == 'release') || github.event_name == 'workflow_dispatch' }}
