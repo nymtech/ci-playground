@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+defaults:
+  run:
+    working-directory: ./nym-vpn/desktop
 
 jobs:
   publish-tauri:
@@ -11,8 +14,6 @@ jobs:
       matrix:
         platform: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.platform }}
-    env:
-      working-directory: ./nym/nym-vpn/desktop
     steps:
       - name: Checkout tools repo
         uses: actions/checkout@v4
@@ -37,7 +38,6 @@ jobs:
             cargo install sd
             cargo install ripgrep
             cargo install cargo-about
-        working-directory: ${{env.working-directory}}
       - name: install ubuntu dependencies
         if: matrix.platform == 'ubuntu-latest'
         run: |
@@ -68,7 +68,6 @@ jobs:
       - name: build ubuntu deb package
         if: matrix.platform == 'ubuntu-latest'
         run: cargo make deb
-        working-directory: ${{env.working-directory}}
       - name: inport apple certs
         if: matrix.platform == 'macos-latest'
         uses: apple-actions/import-codesign-certs@v2
@@ -86,7 +85,6 @@ jobs:
       - name: build macos pkg 
         if: matrix.platform == 'macos-latest'
         run: cargo make pkg
-        working-directory: ${{env.working-directory}}
         env:
           APPLE_TEAM_ID: VW5DZLFHM5
           APPLICATION_SIGNING_IDENTITY: Nym Technologies SA
@@ -100,7 +98,6 @@ jobs:
       - name: build windows installer 
         if: matrix.platform == 'windows-latest'
         run: cargo make msi
-        working-directory: ${{env.working-directory}}
         env:
           SIGN: true
           CERT_FILE: "signing.pfx"
