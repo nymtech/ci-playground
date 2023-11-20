@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, custom-runner-mac-m1, ubuntu-latest]
+        platform: [windows10, custom-runner-mac-m1, custom-linux]
     runs-on: ${{ matrix.platform }}
     env:
       working-directory: ./nym-vpn/desktop
@@ -38,7 +38,7 @@ jobs:
             cargo install ripgrep
             cargo install cargo-about
       - name: install ubuntu dependencies
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.platform == 'custom-linux'
         run: |
             sudo apt install -y build-essential \
             pkg-config \
@@ -57,7 +57,7 @@ jobs:
         run: |
             brew install protobuf
       - name: install protobuf windows
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows10'
         uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install protoc
@@ -67,7 +67,7 @@ jobs:
         with:
           go-version: 'stable'
       - name: build ubuntu deb package
-        if: matrix.platform == 'ubuntu-latest'
+        if: matrix.platform == 'custom-linux'
         run: cargo make deb
         working-directory: ${{ env.working-directory }}
       - name: import apple certs
@@ -95,12 +95,12 @@ jobs:
           INSTALLER_SIGNING_IDENTITY: Nym Technologies SA
       - name: Create env file
         uses: timheuer/base64-to-file@v1.2
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows10'
         with:
           fileName: 'signing.pfx'
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: build windows installer 
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows10'
         run: cargo make msi
         working-directory: ${{ env.working-directory }}
         env:
