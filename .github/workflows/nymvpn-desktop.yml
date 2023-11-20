@@ -3,9 +3,6 @@ on:
   push:
     branches:
       - main
-defaults:
-  run:
-    working-directory: nym/nym-vpn/desktop
 
 jobs:
   publish-tauri:
@@ -14,6 +11,8 @@ jobs:
       matrix:
         platform: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.platform }}
+    env:
+      working-directory: ./nym/nym-vpn/desktop
     steps:
       - name: Checkout tools repo
         uses: actions/checkout@v4
@@ -67,6 +66,7 @@ jobs:
           go-version: 'stable'
       - name: build ubuntu deb package
         if: matrix.platform == 'ubuntu-latest'
+        working-directory: ${{ env.working-directory }}
         run: cargo make deb
       - name: inport apple certs
         if: matrix.platform == 'macos-latest'
@@ -84,6 +84,7 @@ jobs:
           api-private-key: ${{ secrets.APPLE_APPSTORE_PRIVATE_KEY }}
       - name: build macos pkg 
         if: matrix.platform == 'macos-latest'
+        working-directory: ${{ env.working-directory }}
         run: cargo make pkg
         env:
           APPLE_TEAM_ID: VW5DZLFHM5
@@ -97,6 +98,7 @@ jobs:
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: build windows installer 
         if: matrix.platform == 'windows-latest'
+        working-directory: ${{ env.working-directory }}
         run: cargo make msi
         env:
           SIGN: true
