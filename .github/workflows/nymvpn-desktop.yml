@@ -52,6 +52,7 @@ jobs:
             protobuf-compiler \
             zip \
       - name: install protobuf macos
+        continue-on-error: true
         if: matrix.platform == 'custom-runner-mac-m1'
         run: |
             brew install protobuf
@@ -61,6 +62,7 @@ jobs:
         with:
           args: install protoc
       - name: setup go
+        continue-on-error: true
         uses: actions/setup-go@v4
         with:
           go-version: 'stable'
@@ -68,9 +70,10 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         run: cargo make deb
         working-directory: ${{ env.working-directory }}
-      - name: inport apple certs
+      - name: import apple certs
         if: matrix.platform == 'custom-runner-mac-m1'
         uses: apple-actions/import-codesign-certs@v2
+        continue-on-error: true
         with: 
           p12-file-base64: ${{ secrets.APPLE_SIGNING_CERT_BASE64 }}
           p12-password: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
