@@ -137,7 +137,7 @@ export async function createHashesFromReleaseTagOrNameOrId({ releaseTagOrNameOrI
         request: { fetch }
     });
     const owner = "nymtech";
-    const repo = "ci-playground";
+    const repo = "nym";
 
     let releases;
     if(cache) {
