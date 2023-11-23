@@ -1,4 +1,4 @@
-name: 'publish'
+name: "publish"
 on:
   push:
     branches:
@@ -9,13 +9,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, macos-latest, ubuntu-latest]
+        platform: [windows-custom, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     env:
       working-directory: ./nym-vpn/desktop
     steps:
-      - name: try to fix windows path length 
-        if: matrix.platform == 'windows-latest'
+      - name: try to fix windows path length
+        if: matrix.platform == 'windows-custom'
         run: git config --system core.longpaths true
       - name: Checkout tools repo
         uses: actions/checkout@v4
@@ -57,20 +57,20 @@ jobs:
         continue-on-error: true
         if: matrix.platform == 'macos-latest'
         run: |
-            brew install protobuf
+          brew install protobuf
       - name: install protobuf windows
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows-custom'
         uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install protoc
       - name: Add msbuild to PATH
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows-custom'
         uses: microsoft/setup-msbuild@v1.1
       - name: setup go
         continue-on-error: true
         uses: actions/setup-go@v4
         with:
-          go-version: 'stable'
+          go-version: "stable"
       - name: build ubuntu deb package
         if: matrix.platform == 'ubuntu-latest'
         run: cargo make deb
@@ -79,7 +79,7 @@ jobs:
         if: matrix.platform == 'macos-latest'
         uses: apple-actions/import-codesign-certs@v2
         continue-on-error: true
-        with: 
+        with:
           p12-file-base64: ${{ secrets.APPLE_SIGNING_CERT_BASE64 }}
           p12-password: ${{ secrets.APPLE_SIGNING_CERT_PASSWORD }}
       - uses: Apple-Actions/download-provisioning-profiles@v1
@@ -100,24 +100,23 @@ jobs:
           INSTALLER_SIGNING_IDENTITY: Nym Technologies SA
       - name: Create env file
         uses: timheuer/base64-to-file@v1.2
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows-custom'
         with:
-          fileName: 'signing.pfx'
-          fileDir: ${{ github.workspace }}/nym-vpn/desktop
+          fileName: "signing.pfx"
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: install arc windows
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'windows-custom'
         uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install archiver
       - name: add signtool to path
-        if: matrix.platform == 'windows-latest'
-        shell: pwsh
+        if: matrix.platform == 'windows-custom'
         run: |
           curl -L https://github.com/Delphier/SignTool/releases/download/v10.0.22621.755/SignTool-10.0.22621.755.zip --output signtool.zip
-          arc unarchive signtool.zip ${{ github.workspace }}/nym-vpn/desktop
-      - name: build windows installer 
-        if: matrix.platform == 'windows-latest'
+          arc unarchive signtool.zip
+      - name: build windows installer
+        if: matrix.platform == 'windows-custom'
+        shell: bash
         run: cargo make msi
         working-directory: ${{ env.working-directory }}
         env:
@@ -130,6 +129,3 @@ jobs:
           name: nymvpn.deb
           # need to make this not hardcoded to single version
           path: ${{ github.workspace }}/nym-vpn/desktop/target/x86_64-unknown-linux-gnu/debian/nymvpn_0.0.2-1_amd64.deb
-            
-        
-            
