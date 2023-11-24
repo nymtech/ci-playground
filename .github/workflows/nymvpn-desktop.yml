@@ -12,7 +12,7 @@ jobs:
         platform: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     env:
-      working-directory: ./nym-vpn/desktop
+      working-directory: /nym-vpn/desktop
     steps:
       - name: try to fix windows path length
         if: matrix.platform == 'windows-latest'
@@ -75,7 +75,7 @@ jobs:
       - name: build ubuntu deb package
         if: matrix.platform == 'ubuntu-latest'
         run: cargo make deb
-        working-directory: ${{ env.working-directory }}
+        working-directory: .${{ env.working-directory }}
       - name: import apple certs
         if: matrix.platform == 'macos-latest'
         uses: apple-actions/import-codesign-certs@v2
@@ -94,16 +94,17 @@ jobs:
       - name: build macos pkg 
         if: matrix.platform == 'macos-latest'
         run: cargo make pkg
-        working-directory: ${{ env.working-directory }}
+        working-directory: .${{ env.working-directory }}
         env:
           APPLE_TEAM_ID: VW5DZLFHM5
-          APPLICATION_SIGNING_IDENTITY: Nym Technologies SA
-          INSTALLER_SIGNING_IDENTITY: Nym Technologies SA
+          APPLICATION_SIGNING_IDENTITY: 6HNF99CYRN
+          INSTALLER_SIGNING_IDENTITY: 6HNF99CYRN
       - name: Create env file
         uses: timheuer/base64-to-file@v1.2
         if: matrix.platform == 'windows-latest'
         with:
           fileName: "signing.pfx"
+          fileDir: ${{ github.workspace }}\nym-vpn\desktop\nymvpn-packages\windows
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: install arc windows
         if: matrix.platform == 'windows-latest'
@@ -118,7 +119,7 @@ jobs:
       - name: build windows installer
         if: matrix.platform == 'windows-latest'
         run: cargo make msi
-        working-directory: ${{ env.working-directory }}
+        working-directory: .${{ env.working-directory }}
         env:
           SIGN: true
           CERT_FILE: 'signing.pfx'
