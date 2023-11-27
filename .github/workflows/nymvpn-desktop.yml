@@ -99,13 +99,6 @@ jobs:
           APPLE_TEAM_ID: VW5DZLFHM5
           APPLICATION_SIGNING_IDENTITY: 6HNF99CYRN
           INSTALLER_SIGNING_IDENTITY: 6HNF99CYRN
-      - name: Create env file
-        uses: timheuer/base64-to-file@v1.2
-        if: matrix.platform == 'windows-latest'
-        with:
-          fileName: "signing.pfx"
-          fileDir: ${{ github.workspace }}\nym-vpn\desktop\nymvpn-packages\windows
-          encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: install arc windows
         if: matrix.platform == 'windows-latest'
         uses: crazy-max/ghaction-chocolatey@v3
@@ -116,6 +109,13 @@ jobs:
         run: |
           curl -L https://github.com/Delphier/SignTool/releases/download/v10.0.22621.755/SignTool-10.0.22621.755.zip --output signtool.zip
           arc unarchive signtool.zip ${{ github.workspace }}/nym-vpn/desktop
+      - name: Create env file
+        uses: timheuer/base64-to-file@v1.2
+        if: matrix.platform == 'windows-latest'
+        with:
+          fileName: "signing.pfx"
+          fileDir: ${{ github.workspace }}
+          encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: build windows installer
         if: matrix.platform == 'windows-latest'
         run: cargo make msi
