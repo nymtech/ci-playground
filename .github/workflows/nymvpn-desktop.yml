@@ -97,13 +97,17 @@ jobs:
         working-directory: .${{ env.working-directory }}
         env:
           APPLE_TEAM_ID: VW5DZLFHM5
-          APPLICATION_SIGNING_IDENTITY: 6HNF99CYRN
-          INSTALLER_SIGNING_IDENTITY: 6HNF99CYRN
+          APPLICATION_SIGNING_IDENTITY: 'Developer ID Application: Nym Technologies SA (VW5DZLFHM5)'
+          INSTALLER_SIGNING_IDENTITY: 'Developer ID Application: Nym Technologies SA (VW5DZLFHM5)'
       - name: install arc windows
         if: matrix.platform == 'windows-latest'
         uses: crazy-max/ghaction-chocolatey@v3
         with:
           args: install archiver
+      - name: Set path for candle and light
+        if: matrix.platform == 'windows-latest'
+        run: echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" >> $GITHUB_PATH
+        shell: bash
       - name: add signtool to path
         if: matrix.platform == 'windows-latest'
         run: |
