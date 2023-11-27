@@ -114,7 +114,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         with:
           fileName: "signing.pfx"
-          fileDir: ${{ github.workspace }}
+          fileDir: ${{ github.workspace }}/nym-vpn/desktop
           encodedString: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
       - name: build windows installer
         if: matrix.platform == 'windows-latest'
