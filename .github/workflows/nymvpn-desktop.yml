@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest, macos-m3, ubuntu-latest]
+        platform: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     env:
       working-directory: /nym-vpn/desktop
@@ -56,7 +56,7 @@ jobs:
             cargo install cargo-generate-rpm
       - name: install protobuf macos
         continue-on-error: true
-        if: matrix.platform == 'macos-m3'
+        if: matrix.platform == 'macos-latest'
         run: |
           brew install protobuf
       - name: install protobuf windows
@@ -77,9 +77,8 @@ jobs:
         run: cargo make deb
         working-directory: .${{ env.working-directory }}
       - name: Install the Apple developer certificate for code signing
-        if: matrix.platform == 'macos-m3'
+        if: matrix.platform == 'macos-latest'
         env:
-          #test
           APPLE_CERTIFICATE: ${{ secrets.APPLE_DEVELOPER_INSTALLER_PRIVATE_KEY }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_INSTALLER_PRIVATE_KEY_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_DEVELOPER_TEAM_ID }}
@@ -92,7 +91,7 @@ jobs:
           security import certificate.p12 -k build.keychain -P $APPLE_CERTIFICATE_PASSWORD -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $KEYCHAIN_PASSWORD build.keychain
       - name: build macos pkg 
-        if: matrix.platform == 'macos-m3'
+        if: matrix.platform == 'macos-latest'
         run: cargo make pkg
         working-directory: .${{ env.working-directory }}
         env:
