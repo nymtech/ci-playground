@@ -79,6 +79,7 @@ jobs:
       - name: Install the Apple developer certificate for code signing
         if: matrix.platform == 'macos-m3'
         env:
+          #test
           APPLE_CERTIFICATE: ${{ secrets.APPLE_DEVELOPER_INSTALLER_PRIVATE_KEY }}
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_INSTALLER_PRIVATE_KEY_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_DEVELOPER_TEAM_ID }}
