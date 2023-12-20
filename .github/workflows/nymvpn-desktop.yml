@@ -83,9 +83,9 @@ jobs:
           APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_ID_CERTIFICATE_V2_PASS }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_DEVELOPER_TEAM_ID }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASS }}
+          CERTIFICATE_PATH: ${{ runner.temp }}/build_certificate.p12
+          KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
         run: |
-          CERTIFICATE_PATH = $RUNNER_TEMP/build_certificate.p12
-          KEYCHAIN_PATH = $RUNNER_TEMP/app-signing.keychain-db
           echo -n "$APPLE_CERTIFICATE" | base64 --decode -o $CERTIFICATE_PATH
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
