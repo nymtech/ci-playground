@@ -84,15 +84,15 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_DEVELOPER_TEAM_ID }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASS }}
         run: |
-	  CERTIFICATE_PATH = $RUNNER_TEMP/build_certificate.p12
-	  KEYCHAIN_PATH = $RUNNER_TEMP/app-signing.keychain-db
-					
-	  echo -n "$APPLE_CERTIFICATE" | base64 --decode -o $CERTIFICATE_PATH
-					
+          CERTIFICATE_PATH = $RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH = $RUNNER_TEMP/app-signing.keychain-db
+			
+          echo -n "$APPLE_CERTIFICATE" | base64 --decode -o $CERTIFICATE_PATH
+	
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-					
+			
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
       - name: build macos pkg 
