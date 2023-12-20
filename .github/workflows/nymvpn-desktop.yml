@@ -79,17 +79,22 @@ jobs:
       - name: Install the Apple developer certificate for code signing
         if: matrix.platform == 'macos-latest'
         env:
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_DEVELOPER_ID_CERTIFICATE_V2_BASE64 }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_ID_CERTIFICATE_V2_PASS }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_DEVELOPER_INSTALLER_PRIVATE_KEY }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_DEVELOPER_INSTALLER_PRIVATE_KEY_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_DEVELOPER_TEAM_ID }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASS }}
         run: |
-          echo $APPLE_CERTIFICATE | base64 --decode > certificate.p12
-          security create-keychain -p $KEYCHAIN_PASSWORD build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p $KEYCHAIN_PASSWORD build.keychain
-          security import certificate.p12 -k build.keychain -P $APPLE_CERTIFICATE_PASSWORD -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $KEYCHAIN_PASSWORD build.keychain
+					CERTIFICATE_PATH = $RUNNER_TEMP/build_certificate.p12
+					KEYCHAIN_PATH = $RUNNER_TEMP/app-signing.keychain-db
+					
+					echo -n "$APPLE_CERTIFICATE" | base64 --decode -o $CERTIFICATE_PATH
+					
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+					
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
       - name: build macos pkg 
         if: matrix.platform == 'macos-latest'
         run: cargo make pkg
