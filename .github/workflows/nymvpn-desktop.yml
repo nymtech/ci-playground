@@ -100,6 +100,10 @@ jobs:
           KEYCHAIN_PATH: ${{ runner.temp }}/app-signing.keychain-db
           APPLICATION_SIGNING_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY_ID }}
           INSTALLER_SIGNING_IDENTITY: ${{ secrets.INSTALLER_SIGNING_IDENTITY }}
+      - name: Clean up keychain
+        if: matrix.platform == 'macos-latest'
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
       - name: install arc windows
         if: matrix.platform == 'windows-latest'
         uses: crazy-max/ghaction-chocolatey@v3
