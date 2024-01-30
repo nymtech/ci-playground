@@ -1,4 +1,4 @@
-name: Publish Nym binaries
+name: Build Nym Validator Rewarder
 
 on:
   workflow_dispatch:
