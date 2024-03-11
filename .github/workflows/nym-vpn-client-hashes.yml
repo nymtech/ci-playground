@@ -1,0 +1,27 @@
+name: Calculate Nym VPN Client hashes
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Release tag, hash or id'
+        required: true
+        default: nym-vpn-desktop-v0.0.6
+        type: string
+
+
+jobs:
+  calc_hashes:
+    runs-on: ubuntu-latest
+    steps:
+      # checkout target repo
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          repository: nymtech/nym-vpn-client
+          ref: ${{ inputs.ref }}
+      
+      - name: Run custom github action
+        uses: nymtech/nym/.github/actions/nym-hash-release.yml@bugfix/action-release
+        with:
+          repo: nym-vpn-client
