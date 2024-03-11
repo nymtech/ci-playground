@@ -22,6 +22,6 @@ jobs:
           ref: ${{ inputs.ref }}
       
       - name: Run custom github action
-        uses: nymtech/nym/.github/actions/nym-hash-release@bugfix/action-release
+        uses: nymtech/nym/.github/actions/nym-hash-releases@bugfix/action-release
         with:
           repo: nym-vpn-client
