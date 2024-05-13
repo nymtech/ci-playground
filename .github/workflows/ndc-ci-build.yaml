@@ -1,0 +1,69 @@
+name: ndc-ci-build-release
+
+on:
+  push:
+    paths:
+      - 'nym-vpn-api/**'
+      - 'Cargo.toml'
+  pull_request:
+    paths:
+      - 'nym-vpn-api/**'
+      - 'Cargo.toml'
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: false
+        description: Branch or tag to checkout from `nymtech/nym-dot-com` repository
+        default: develop
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-22.04-arc
+    env:
+      CARGO_TERM_COLOR: always
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          repository: nymtech/nym-dot-com
+          ref: ${{ inputs.ref }}
+
+      - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+
+      - name: Annotate with clippy checks
+        uses: actions-rs/clippy-check@v1
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --workspace
+
+      - name: Build debug (fmt, clippy)
+        run: make build-ci
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: |
+            target/release/nym-vpn-api
+          retention-days: 5
+
+      - name: Deploy artifacts to CI www
+        continue-on-error: true
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.CI_WWW_SSH_PRIVATE_KEY }}
+          ARGS: "-avzr"
+          SOURCE: "target/release/nym-vpn-api"
+          REMOTE_HOST: ${{ secrets.CI_WWW_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.CI_WWW_REMOTE_USER }}
+          TARGET: ${{ secrets.CI_WWW_REMOTE_TARGET }}/builds/${{ github.ref_name }}/nym-vpn-api
+
