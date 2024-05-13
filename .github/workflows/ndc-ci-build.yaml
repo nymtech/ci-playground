@@ -14,7 +14,7 @@ on:
       ref:
         required: false
         description: Branch or tag to checkout from `nymtech/nym-dot-com` repository
-        default: develop
+        default: feature/nym-vpn-api
 
 jobs:
   build:
