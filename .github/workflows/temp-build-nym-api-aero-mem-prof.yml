@@ -41,6 +41,10 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Sets env vars for tokio if set in manual dispatch inputs
+        run: |
+          echo 'RUSTFLAGS="--cfg tokio_unstable"' >> $GITHUB_ENV
+        if: github.event_name == 'workflow_dispatch' && inputs.add_tokio_unstable == true
 
       - name: TEST print env1
         run: echo ${{ toJSON(env) }}
@@ -48,23 +52,18 @@ jobs:
       - name: TEST print env2
         run: echo ${{ env.CARGO_FEATURES }}
 
-      - name: Sets env vars for tokio if set in manual dispatch inputs
-        run: |
-          echo 'RUSTFLAGS="--cfg tokio_unstable"' >> $GITHUB_ENV
-        if: github.event_name == 'workflow_dispatch' && inputs.add_tokio_unstable == true
-
       - name: Maybe build nym-api with jemalloc
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --bin nym-api --release ${{ env.CARGO_FEATURES }} --features=memory-prof
+          args: --bin nym-api --release --features=memory-prof ${{ env.CARGO_FEATURES }}
         if: github.event_name == 'workflow_dispatch' && inputs.enable_jemalloc == true
 
       - name: Maybe build nym-api WITHOUT jemalloc
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --bin nym-api ${{ env.CARGO_FEATURES }} --release
+          args: --bin nym-api --release ${{ env.CARGO_FEATURES }}
         if: github.event_name == 'workflow_dispatch' && inputs.enable_jemalloc == false
 
       - name: Upload Artifact
