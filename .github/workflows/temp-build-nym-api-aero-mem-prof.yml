@@ -41,6 +41,12 @@ jobs:
         with:
           toolchain: stable
 
+      - name: TEST print env1
+        run: echo ${{ env }}
+
+      - name: TEST print env2
+        run: echo ${{ env.CARGO_FEATURES }}
+
       - name: Sets env vars for tokio if set in manual dispatch inputs
         run: |
           echo 'RUSTFLAGS="--cfg tokio_unstable"' >> $GITHUB_ENV
