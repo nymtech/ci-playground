@@ -46,12 +46,6 @@ jobs:
           echo 'RUSTFLAGS="--cfg tokio_unstable"' >> $GITHUB_ENV
         if: github.event_name == 'workflow_dispatch' && inputs.add_tokio_unstable == true
 
-      - name: TEST print env1
-        run: echo ${{ toJSON(env) }}
-
-      - name: TEST print env2
-        run: echo ${{ env.CARGO_FEATURES }}
-
       - name: Maybe build nym-api with jemalloc
         uses: actions-rs/cargo@v1
         with:
