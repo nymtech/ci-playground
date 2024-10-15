@@ -42,14 +42,14 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --bin nym-api --release --features=memory-prof
+          args: --bin nym-api --release --features=memory-prof,console-subscriber
         if: github.event_name == 'workflow_dispatch' && inputs.enable_jemalloc == true
 
       - name: Maybe build nym-api WITHOUT jemalloc
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --bin nym-api --release
+          args: --bin nym-api --release --features=console-subscriber
         if: github.event_name == 'workflow_dispatch' && inputs.enable_jemalloc == false
 
       - name: Upload Artifact
