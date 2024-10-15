@@ -1,4 +1,4 @@
-name: Build Nym-Api (temp/memory-profiling) NO TOKIO CONSOLE
+name: Build Nym-Api (temp/memory-profiling) + TOKIO CONSOLE
 
 on:
   workflow_dispatch:
@@ -17,6 +17,8 @@ jobs:
       matrix:
         platform: [ubuntu-22.04-16-core]
     runs-on: ${{ matrix.platform }}
+    env:
+      RUSTFLAGS: "--cfg tokio_unstable"
 
     steps:
       - uses: actions/checkout@v3
