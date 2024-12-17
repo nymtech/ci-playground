@@ -1,4 +1,4 @@
-name: Build Nym-Node (feature/mixnet-listening-smoosh branch)
+name: Build Nym-Node (release/2024.15-reeses branch)
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nymtech/nym
-          ref: feature/mixnet-listening-smoosh
+          ref: release/2024.15-reeses
 
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
