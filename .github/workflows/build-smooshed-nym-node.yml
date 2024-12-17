@@ -1,4 +1,4 @@
-name: Build Nym-Node (release/2024.15-reeses branch)
+name: Build Nym-Node (feature/wg-metrics)
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nymtech/nym
-          ref: release/2024.15-reeses
+          ref: feature/wg-metrics
 
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
