@@ -1,0 +1,55 @@
+name: Tests and versions for harbor.nymte.ch
+
+on:
+  workflow_dispatch:
+    inputs:
+      gateway_probe_git_ref:
+        type: string
+        default: nym-vpn-core-v1.4.0
+        required: true
+        description: Which gateway probe git ref to build the image with
+      release_image:
+        description: 'Tag image as a release'
+        required: true
+        default: false
+        type: boolean
+
+env:
+  WORKING_DIRECTORY: "nym-node-status-api/nym-node-status-agent"
+  CONTAINER_NAME: "node-status-agent"
+
+jobs:
+  build-container:
+    runs-on: arc-ubuntu-22.04-dind
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          repository: nymtech/nym        
+
+      - name: Get version from cargo.toml
+        uses: mikefarah/yq@v4.45.4
+        id: get_version
+        with:
+          cmd: yq -oy '.package.version' ${{ env.WORKING_DIRECTORY }}/Cargo.toml
+
+      - name: cleanup-gateway-probe-ref
+        id: cleanup_gateway_probe_ref
+        run: |
+          GATEWAY_PROBE_GIT_REF=${{ github.event.inputs.gateway_probe_git_ref }}
+          GIT_REF_SLUG="${GATEWAY_PROBE_GIT_REF//\//-}"
+          echo "git_ref=${GIT_REF_SLUG}" >> $GITHUB_OUTPUT
+
+      - name: Set GIT_TAG variable
+        run: echo "GIT_TAG=${{ env.WORKING_DIRECTORY }}-${{ steps.get_version.outputs.result }}-${{ steps.cleanup_gateway_probe_ref.outputs.git_ref }}" >> $GITHUB_ENV
+
+      - name: Set IMAGE_NAME_AND_TAGS variable
+        run: echo "IMAGE_NAME_AND_TAGS=${{ env.CONTAINER_NAME }}:${{ steps.get_version.outputs.result }}-${{ steps.cleanup_gateway_probe_ref.outputs.git_ref }}" >> $GITHUB_ENV
+
+      - name: Output
+        run: echo "GIT_TAG='$GIT_TAG'  IMAGE_NAME_AND_TAGS='$IMAGE_NAME_AND_TAGS'"
+
