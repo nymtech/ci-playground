@@ -44,6 +44,15 @@ jobs:
             target/release/nym-node
           retention-days: 30
 
+      - name: Prepare build output directory
+        shell: bash
+        env:
+          OUTPUT_DIR: ci-builds/nym-node/mark/otel
+        run: |
+          rm -rf ci-builds || true
+          mkdir -p $OUTPUT_DIR
+          echo $OUTPUT_DIR
+
       - name: Prepare build output
         shell: bash
         env:
