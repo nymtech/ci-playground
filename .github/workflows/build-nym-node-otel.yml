@@ -44,14 +44,21 @@ jobs:
             target/release/nym-node
           retention-days: 30
 
-      - name: Deploy artifacts to CI www
+      - name: Prepare build output
+        shell: bash
+        env:
+          OUTPUT_DIR: ci-builds/nym-node/mark/otel
+        run: |
+          cp target/release/nym-node $OUTPUT_DIR
+
+      - name: Deploy branch to CI www
         continue-on-error: true
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.CI_WWW_SSH_PRIVATE_KEY }}
           ARGS: "-avzr"
-          SOURCE: "target/release/nym-node"
+          SOURCE: "ci-builds/"
           REMOTE_HOST: ${{ secrets.CI_WWW_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.CI_WWW_REMOTE_USER }}
-          TARGET: ${{ secrets.CI_WWW_REMOTE_TARGET }}/builds/${{ github.ref_name }}/nym-node/otel/ubuntu-22.04
-          
+          TARGET: ${{ secrets.CI_WWW_REMOTE_TARGET }}/builds/
+          EXCLUDE: "/dist/, /node_modules/"          
