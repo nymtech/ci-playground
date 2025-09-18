@@ -34,7 +34,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --bin nym-node --release
+          args: --bin nym-node --release --features otel
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
