@@ -26,6 +26,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "disable upgrade mode by removing the contents of the published attestation.json"
           title: "Disable Upgrade Mode"
-          body: "This PR finishes the system-wide upgrade mode by removing the published attestation.json"
+          body: "This PR finishes the system-wide upgrade mode by removing the contents of the published attestation.json"
           add-paths: |
               src/public/attestation.json
