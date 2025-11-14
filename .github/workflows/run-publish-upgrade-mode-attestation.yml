@@ -25,6 +25,7 @@ jobs:
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
+                  name: upgrade-mode-attestation
                   path: output/attestation.json
 
             - name: Create Pull Request

@@ -1,0 +1,43 @@
+name: Remove File and Create PR
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  remove-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Remove the attestation file
+        run: |
+          ATTESTATION_PATH="src/public/attestation.json"
+          if [ -f "$ATTESTATION_PATH" ]; then
+            git rm "$ATTESTATION_PATH"
+            git commit -m "Remove $ATTESTATION_PATH"
+          else
+            echo "$ATTESTATION_PATH does not exist, nothing to remove"
+          fi
+
+      - name: Push branch
+        run: |
+          BRANCH_NAME="finish-upgrade-mode-$(date +%s)"
+          git checkout -b "$BRANCH_NAME"
+          git push origin "$BRANCH_NAME"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "disable upgrade mode by removing the published attestation.json"
+          branch: ${{ github.ref_name }}
+          base: main
+          title: "Disable Upgrade Mode"
+          body: "This PR finishes the system-wide upgrade mode by removing the published attestation.json"
