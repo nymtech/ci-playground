@@ -1,9 +1,0 @@
-{
-    "type": "upgrade_mode",
-    "starting_time": "2025-11-14T16:16:04Z",
-    "attester_public_key": "6sfL7xcCzmcsxA1uXtnExcpA7KWypCcsUbs7SzUADxng",
-    "authorised_jwt_issuers": [
-        "EgHv7iW4yaMVFJgezqsdekGky5i9ppyjZcV8V5oGUoxg"
-    ],
-    "signature": "564PSiJvxrXH3QRZbD4cnfUERBkTsW3C6kAiQg4n8r8gCaof3eDgoCzKMTFcbt3XMiocWSWDNfoZ72FZ4oZd8VWj"
-}
