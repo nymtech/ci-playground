@@ -27,24 +27,3 @@ inputs:
         export ATTESTER_PRIVATE_KEY="${{ inputs.attester_private_key }}"
         python $GITHUB_ACTION_PATH/attestation_gen.py
       shell: bash
-
-jobs: 
-    create-attestation:
-        strategy:
-            fail-fast: false
-            matrix:
-                platform: [ubuntu-latest]
-        runs-on: ${{ matrix.platform }}
-        steps:
-            - name: Set up Python
-              uses: actions/setup-python@v5
-              with:
-                python-version: '3.11'
-
-            - name: Install action-specific dependencies
-              run: pip install -r $GITHUB_ACTION_PATH/requirements.txt
-
-            - name: Generate the signed Attestation
-              env:
-                ATTESTER_PRIVATE_KEY: ${{ secrets.TEST_SECRET }}
-              run: python $GITHUB_ACTION_PATH/attestation_gen.py
