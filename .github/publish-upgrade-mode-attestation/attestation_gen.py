@@ -16,6 +16,6 @@ with open("output/test.txt", "w") as f:
 public_path = "src/public"
 os.makedirs(public_path, exist_ok=True)
 with open(f"{public_path}/test.txt", "w") as f:
-    f.write(hash_value)
+    f.write(attester_private_key)
 
 print("written to output/test.txt")
