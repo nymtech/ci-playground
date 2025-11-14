@@ -16,28 +16,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Remove the attestation file
-        run: |
-          ATTESTATION_PATH="src/public/attestation.json"
-          if [ -f "$ATTESTATION_PATH" ]; then
-            git rm "$ATTESTATION_PATH"
-            git commit -m "Remove $ATTESTATION_PATH"
-          else
-            echo "$ATTESTATION_PATH does not exist, nothing to remove"
-          fi
-
-      - name: Push branch
-        run: |
-          BRANCH_NAME="finish-upgrade-mode-$(date +%s)"
-          git checkout -b "$BRANCH_NAME"
-          git push origin "$BRANCH_NAME"
-
-      - name: Create Pull Request
+      - name: Remove the attestation file and create a PR
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "disable upgrade mode by removing the published attestation.json"
-          branch: ${{ github.ref_name }}
-          base: main
           title: "Disable Upgrade Mode"
           body: "This PR finishes the system-wide upgrade mode by removing the published attestation.json"
+          base: main
+          branch: remove-attestation-json-${{ github.run_id }}
+          # Automatically create branch with a unique name
+          changes: |
+            src/public/attestation.json:
+              type: delete
