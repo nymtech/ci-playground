@@ -1,0 +1,40 @@
+name: Start Upgrade Mode
+
+on:
+  workflow_dispatch:
+
+jobs: 
+    create-attestation:
+        strategy:
+            fail-fast: false
+            matrix:
+                platform: [ubuntu-latest]
+        runs-on: ${{ matrix.platform }}
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 0  # needed for PR commits
+                
+            - name: Run my the generate action
+              uses: ./.github/publish-upgrade-mode-attestation
+              with:
+                  attester_private_key: ${{ secrets.DUMMY_ATTESTER_PRIVATE_KEY }}
+                  jwt_issuers: "EgHv7iW4yaMVFJgezqsdekGky5i9ppyjZcV8V5oGUoxg"
+
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: upgrade-mode-attestation
+                  path: output/attestation.json
+
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v6
+              with:
+                commit-message: "enable upgrade mode"
+                branch: ci/publish-upgrade-mode-attestation
+                title: "Publish new Upgrade Mode Attestation"
+                body: |
+                    This PR attempts to publish **attestation.json** with the upgrade mode content.
+                add-paths: |
+                    src/public/attestation.json

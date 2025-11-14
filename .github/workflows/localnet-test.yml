@@ -1,0 +1,120 @@
+name: Perform basic localnet test
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: false
+        description: Branch or tag to checkout from `nymtech/nym` repository
+        default: feature/localnet-v2
+
+jobs:
+  run-localnet-test:
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Install Dependencies (Linux)
+        run: sudo apt-get update && sudo apt-get -y install build-essential uidmap git
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          rootless: 'false'
+
+
+      - name: Unify Docker version for root + runner
+        run: |
+          NEW_DOCKER="$(dirname $(which docker))/docker"
+          echo "New docker path: $NEW_DOCKER"
+          sudo ln -sf "$NEW_DOCKER" /usr/bin/docker
+          sudo ln -sf "$NEW_DOCKER" /usr/bin/dockerd || true
+
+#      # ---------------------------------------
+#      # 1. Set up Docker (buildx) AS NON-ROOT
+#      # ---------------------------------------
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v3
+
+#      # ---------------------------------------
+#      # 2. Copy Docker config & Buildx builder
+#      #    to ROOT so sudo sees the same setup
+#      # ---------------------------------------
+#      - name: Copy Docker config to root
+#        run: |
+#          sudo mkdir -p /root/.docker
+#          sudo cp -r /home/runner/.docker/* /root/.docker/
+#
+#      # ---------------------------------------
+#      # 3. (Optional but recommended)
+#      #    Verify root sees the same builder
+#      # ---------------------------------------
+#      - name: Verify root docker builder
+#        run: |
+#          sudo docker buildx ls
+
+#      - name: Download Kata Manager
+#        run: |
+#          sudo curl -fsSL https://raw.githubusercontent.com/kata-containers/kata-containers/refs/tags/3.23.0/utils/kata-manager.sh -o kata-manager.sh
+#          sudo chmod +x kata-manager.sh
+#        working-directory: /
+#
+#      - name: Setup Kata
+#        # installs kata alongside nerdctl
+#        run: sudo ./kata-manager.sh -N
+#        working-directory: /
+
+        # no clue why this fails within the orchestrator, but I don't have enough sanity to debug it
+        # so build nyxd image outside of it
+      - name: build nyxd image
+        run: |
+          sudo which docker
+          sudo DOCKER_BUILDKIT=0 docker build --platform linux/amd64 -f Dockerfile.dev https://github.com/nymtech/nyxd.git#v0.60.1 -t localnet-nyxd:v0.60.1
+
+#      - name: save nyxd image
+#        run: |
+#          TMP_DIR=$(mktemp -d)
+#          echo "TMP_DIR=$TMP_DIR" >> $GITHUB_ENV
+#          docker save -o $TMP_DIR/nyxd localnet-nyxd:v0.60.1
+#
+#      - name: load nyxd image
+#        run: sudo nerdctl image load --input $TMP_DIR/nyxd
+#
+#      - name: Check out repository code
+#        uses: actions/checkout@v6
+#        with:
+#          path: 'nym'
+#          repository: nymtech/nym
+#          ref: ${{ inputs.ref }}
+#
+#      - name: Install rust toolchain
+#        uses: actions-rs/toolchain@v1
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#          override: true
+#          components: rustfmt, clippy
+#
+#
+#      - name: Build localnet orchestrator binary
+#        working-directory: nym
+#        # for current test don't waste time with release build
+#        run: cargo build --bin localnet-orchestrator
+#
+#      - name: Run basic prerequisites check
+#        run: sudo ./nym/target/debug/localnet-orchestrator check-prerequisites
+#
+#      - name: Test nyxd
+#        run: sudo ./nym/target/debug/localnet-orchestrator up --monorepo-root nym
+#
+#
+#      - name: Test nyxd2
+#        run: sudo nerdctl container ls
+#
+#
+#      - name: Test nyxd3
+#        run: sleep 20 && curl http://127.0.0.1:26657/abci_info
+
+
+
+
+
+          
