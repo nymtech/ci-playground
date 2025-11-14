@@ -18,12 +18,12 @@ jobs:
                 python-version: '3.11'
 
             - name: Install action-specific dependencies
-              run: pip install -r .github/actions/generate-attestation/requirements.txt
+              run: pip install -r .github/generate-attestation/requirements.txt
 
             - name: Generate the signed Attestation
               env:
                 ATTESTER_PRIVATE_KEY: ${{ secrets.TEST_SECRET }}
-              run: python .github/actions/generate-attestation/attestation_gen.py
+              run: python .github/generate-attestation/attestation_gen.py
 
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
