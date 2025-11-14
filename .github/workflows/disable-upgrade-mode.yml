@@ -1,4 +1,4 @@
-name: Remove File and Create PR
+name: Finish Upgrade Mode
 
 on:
   workflow_dispatch:  # Allows manual triggering

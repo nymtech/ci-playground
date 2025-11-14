@@ -1,4 +1,4 @@
-name: Test run create attestation.json
+name: Start Upgrade Mode
 
 on:
   workflow_dispatch:
