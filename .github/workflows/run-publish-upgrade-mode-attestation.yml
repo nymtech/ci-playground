@@ -19,7 +19,7 @@ jobs:
             - name: Run my the generate action
               uses: ./.github/publish-upgrade-mode-attestation
               with:
-                  my_secret: ${{ secrets.TEST_SECRET }}
+                  attester_private_key: ${{ secrets.TEST_SECRET }}
 
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
