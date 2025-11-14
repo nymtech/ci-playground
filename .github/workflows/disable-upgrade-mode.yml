@@ -16,6 +16,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - run: |
+          rm src/public/attestation.json
+
+
       - name: Remove the attestation file and create a PR
         uses: peter-evans/create-pull-request@v5
         with:
@@ -23,9 +27,5 @@ jobs:
           commit-message: "disable upgrade mode by removing the published attestation.json"
           title: "Disable Upgrade Mode"
           body: "This PR finishes the system-wide upgrade mode by removing the published attestation.json"
-          base: main
-          branch: remove-attestation-json-${{ github.run_id }}
-          # Automatically create branch with a unique name
-          changes: |
-            src/public/attestation.json:
-              type: delete
+          add-paths: |
+              src/public/attestation.json

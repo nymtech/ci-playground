@@ -35,6 +35,6 @@ jobs:
                 branch: ci/publish-upgrade-mode-attestation
                 title: "Publish new Upgrade Mode Attestation"
                 body: |
-                    This PR attempts to publush **attestation.json** with the upgrade mode content.
+                    This PR attempts to publish **attestation.json** with the upgrade mode content.
                 add-paths: |
                     src/public/attestation.json
