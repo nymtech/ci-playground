@@ -20,7 +20,7 @@ jobs:
               uses: ./.github/publish-upgrade-mode-attestation
               with:
                   attester_private_key: ${{ secrets.DUMMY_ATTESTER_PRIVATE_KEY }}
-                  authorised_jwt_issuers: "EgHv7iW4yaMVFJgezqsdekGky5i9ppyjZcV8V5oGUoxg"
+                  jwt_issuers: "EgHv7iW4yaMVFJgezqsdekGky5i9ppyjZcV8V5oGUoxg"
 
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
