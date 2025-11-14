@@ -15,7 +15,7 @@ if not authorised_jwt_issuers_raw:
     raise ValueError("AUTHORISED_JWT_ISSUERS is not set")
 
 
-authorised_jwt_issuers = [authorised_jwt_issuers_raw.split(',')]
+authorised_jwt_issuers = authorised_jwt_issuers_raw.split(',')
 
 # decode passed private key
 attester_private_key_decoded = base58.b58decode(attester_private_key)
