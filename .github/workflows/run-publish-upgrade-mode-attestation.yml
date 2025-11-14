@@ -1,0 +1,39 @@
+name: Test run create attestation.json
+
+on:
+  workflow_dispatch:
+
+jobs: 
+    create-attestation:
+        strategy:
+            fail-fast: false
+            matrix:
+                platform: [ubuntu-latest]
+        runs-on: ${{ matrix.platform }}
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 0  # needed for PR commits
+                
+            - name: Run my the generate action
+              uses: ./.github/publish-upgrade-mode-attestation
+              with:
+                  my_secret: ${{ secrets.TEST_SECRET }}
+
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: output-files
+                  path: output/attestation.json
+
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v6
+              with:
+                commit-message: "enable upgrade mode"
+                branch: ci/publish-upgrade-mode-attestation
+                title: "Publish new Upgrade Mode Attestation"
+                body: |
+                    This PR attempts to publush **attestation.json** with the upgrade mode content.
+                add-paths: |
+                    src/public/test.txt

@@ -1,7 +1,32 @@
 name: Test Create attestation.json
 
-on:
-  workflow_dispatch:
+
+inputs:
+  attester_private_key:
+    description: "Private key used for signing attestation.json"
+    required: true
+
+  # jwt_issuers:
+  #   description: "List of public keys of entities allowed to issue upgrade mode JWTs"
+  #   required: true
+
+  runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: pip install -r $GITHUB_ACTION_PATH/requirements.txt
+      shell: bash
+
+    - name: Generate signed attestation
+      run: |
+        export ATTESTER_PRIVATE_KEY="${{ inputs.attester_private_key }}"
+        python $GITHUB_ACTION_PATH/attestation_gen.py
+      shell: bash
 
 jobs: 
     create-attestation:
@@ -23,20 +48,3 @@ jobs:
               env:
                 ATTESTER_PRIVATE_KEY: ${{ secrets.TEST_SECRET }}
               run: python $GITHUB_ACTION_PATH/attestation_gen.py
-
-            - name: Upload artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: output-files
-                  path: output/attestation.json
-
-            - name: Create Pull Request
-              uses: peter-evans/create-pull-request@v6
-              with:
-                commit-message: "enable upgrade mode"
-                branch: ci/publish-upgrade-mode-attestation
-                title: "Publish new Upgrade Mode Attestation"
-                body: |
-                    This PR attempts to publush **attestation.json** with the upgrade mode content.
-                add-paths: |
-                    src/public/test.txt
