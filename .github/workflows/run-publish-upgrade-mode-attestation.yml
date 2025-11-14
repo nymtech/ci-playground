@@ -25,7 +25,6 @@ jobs:
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: output-files
                   path: output/attestation.json
 
             - name: Create Pull Request
@@ -37,4 +36,4 @@ jobs:
                 body: |
                     This PR attempts to publush **attestation.json** with the upgrade mode content.
                 add-paths: |
-                    src/public/test.txt
+                    src/public/attestation.json
