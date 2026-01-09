@@ -33,7 +33,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --bin nym-node --release --features otel
+          args: --bin nym-node --release
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -46,7 +46,7 @@ jobs:
       - name: Prepare build output directory
         shell: bash
         env:
-          OUTPUT_DIR: ci-builds/nym-node/feature/otel
+          OUTPUT_DIR: ci-builds/nym-node/feature/defguard_wg
         run: |
           rm -rf ci-builds || true
           mkdir -p $OUTPUT_DIR
@@ -55,7 +55,7 @@ jobs:
       - name: Prepare build output
         shell: bash
         env:
-          OUTPUT_DIR: ci-builds/nym-node/feature/otel
+          OUTPUT_DIR: ci-builds/nym-node/feature/defguard_wg
         run: |
           cp target/release/nym-node $OUTPUT_DIR
 
