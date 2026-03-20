@@ -1,4 +1,4 @@
-name: Build Nym-Node (otel)
+name: Build Nym-Node (IPR LP Stream)
 
 on:
   workflow_dispatch:
